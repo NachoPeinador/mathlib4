@@ -445,3 +445,26 @@ theorem natCast_eq_zero_or_one_of_two_eq_zero (n : ℕ) (h : (2 : R) = 0) :
   · exact Or.inr <| natCast_eq_one_of_odd_of_two_eq_zero hn h
 
 end CharTwo
+
+namespace Nat
+
+/--
+Parity obstruction for powers: an even natural number raised to a non-zero power
+cannot equal an odd natural number raised to any power.
+-/
+theorem even_pow_ne_odd_pow {m n a b : ℕ} (hm : Even m) (hn : Odd n) (hb : b ≠ 0) :
+    m ^ b ≠ n ^ a := by
+  intro h
+  have h_even : Even (m ^ b) := Nat.even_pow.mpr ⟨hm, hb⟩
+  have h_odd : Odd (n ^ a) := hn.pow a
+  rw [h] at h_even
+  exact Nat.even_iff_not_odd.mp h_even h_odd
+
+/--
+Diophantine parity obstruction for powers of 2 and 3:
+`2^b = 3^a` has no solutions for `b > 0`.
+-/
+theorem two_pow_ne_three_pow {a b : ℕ} (hb : b ≠ 0) : 2 ^ b ≠ 3 ^ a :=
+  even_pow_ne_odd_pow (by decide) (by decide) hb
+
+end Nat
